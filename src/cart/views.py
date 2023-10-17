@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from django.db import transaction
 from src.cart.models import Cart,CartItem
 from src.product.models import Product
 from src.cart.serializers import CartSerializer
@@ -39,27 +40,31 @@ class CartApiView(APIView):
         else:
             count = data.get('count')
         
-        if CartItem.objects.filter(cart=cart, product=product).exists():
-            cart.total_items += count
-            cart.total = cart.total + (price*count) 
-            cart_item = CartItem.objects.filter(cart=cart, product=product).get()
-            cart_item.quantity += count
-            cart_item.save()
-            cart.save()
-            return Response({'success':'added'},status=status.HTTP_200_OK)
+        with transaction.atomic():
+            try:
+                if CartItem.objects.filter(cart=cart, product=product).exists():
+                    cart.total_items += count
+                    cart.total = cart.total + (price*count) 
+                    cart_item = CartItem.objects.filter(cart=cart, product=product).get()
+                    cart_item.quantity += count
+                    cart_item.save()
+                    cart.save()
+                    return Response({'success':'added'},status=status.HTTP_200_OK)
         
-        cart.total_items += count
-        cart.total = cart.total+(price*count)
+                cart.total_items += count
         
-        CartItem.objects.create(
-            cart=cart,
-            product=product,
-            price=price,
-            quantity =count
-        ).save()
-        cart.save()
+                CartItem.objects.create(
+                    cart=cart,
+                    product=product,
+                    quantity =count
+                ).save()
+                cart.save()
+                return Response({'success':'added'},status=status.HTTP_200_OK) 
+            except Exception as e:
+                print(e)
+                return Response({'error':'error'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        return Response({'success':'added'},status=status.HTTP_200_OK) 
+        
     
         
 class CartUpdateAndDeleteApiView(APIView):

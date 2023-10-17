@@ -52,6 +52,7 @@ LOCAL_APPS = [
     'src.category',
     'src.user',
     'src.cart',
+    'src.pay',
 ]
 THIRTY_PARTY = [
     'rest_framework',

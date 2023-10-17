@@ -14,18 +14,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path,include
-from core import const
-
+from django.urls import path
+from src.pay.views import PayApiView
 urlpatterns = [
-    path(const.AUTH_URL, include('djoser.urls')),
-    path(const.AUTH_URL, include('djoser.urls.jwt')),
-    path(const.AUTH_URL, include('djoser.social.urls')),
-    
-    path('admin/', admin.site.urls),
-    path(const.BASE_URL+'category/',include('src.category.urls')),
-    path(const.BASE_URL+'product/',include('src.product.urls')),
-    path(const.BASE_URL+'cart/', include('src.cart.urls')),
-    path(const.BASE_URL+'pay/', include('src.pay.urls')),
+    path('', PayApiView.as_view(),name='payView'),
 ]
