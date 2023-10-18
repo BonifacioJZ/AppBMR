@@ -44,7 +44,6 @@ class CartApiView(APIView):
             try:
                 if CartItem.objects.filter(cart=cart, product=product).exists():
                     cart.total_items += count
-                    cart.total = cart.total + (price*count) 
                     cart_item = CartItem.objects.filter(cart=cart, product=product).get()
                     cart_item.quantity += count
                     cart_item.save()
@@ -91,7 +90,6 @@ class CartUpdateAndDeleteApiView(APIView):
             
             item.quantity = quantity + 1
             cart.total_items = cart.total_items + 1
-            cart.total = cart.total + (product.price*1)
             
             cart.save()
             item.save()

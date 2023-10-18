@@ -51,12 +51,14 @@ class PayApiView(APIView):
             return Response({'message':'sale made successfully'},status=status.HTTP_200_OK)
 
     def get(self, request:Request)->Response:
-        user = request.user 
+        
+        user = self.request.user
+        pays = []
         pay = Pay.objects.filter(user=user)
-        print(pay)
-        result = PaySerializer(pay)
-        print(result)
-        return Response(result.data,status=status.HTTP_200_OK)
+        for pay_d in pay:
+            result = PaySerializer(pay_d)
+            pays.append(result.data)
+        return Response(pays,status=status.HTTP_200_OK)
 
     def put(self, request):
         return Response(status=status.HTTP_200_OK)
