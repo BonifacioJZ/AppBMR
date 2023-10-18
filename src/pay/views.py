@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.db import transaction
@@ -7,10 +8,20 @@ from datetime import datetime
 
 from src.cart.models import Cart,CartItem
 from src.pay.models import Pay,PayDetails
+from src.pay.serializers import PaySerializer
 
 class PayApiView(APIView):
     permission_classes = (IsAuthenticated,)
     def post(self, request)->Response:
+        """
+        The `post` function is used to make a sale of products by creating a payment record, saving the
+        sale details in the database, and updating the cart.
+        
+        :param request: The `request` parameter is an object that represents the HTTP request made by
+        the user. It contains information such as the user making the request, the data sent in the
+        request, and other metadata
+        :return: a Response object.
+        """
         """make the sale of the products
 
         Args:
@@ -39,8 +50,13 @@ class PayApiView(APIView):
                 return Response({'message':'error making sale'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             return Response({'message':'sale made successfully'},status=status.HTTP_200_OK)
 
-    def get(self, request):
-        return Response(status=status.HTTP_200_OK)
+    def get(self, request:Request)->Response:
+        user = request.user 
+        pay = Pay.objects.filter(user=user)
+        print(pay)
+        result = PaySerializer(pay)
+        print(result)
+        return Response(result.data,status=status.HTTP_200_OK)
 
     def put(self, request):
         return Response(status=status.HTTP_200_OK)

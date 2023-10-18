@@ -28,8 +28,16 @@ class CartSerializer(serializers.ModelSerializer):
         fields = ('id','items','total_items','sub_total')
             
     def total(self,cart:Cart)->float:
+        """
+        The function calculates the total cost of items in a shopping cart.
+        
+        :param cart: The "cart" parameter is an instance of the "Cart" class. It represents a shopping
+        cart object that contains a collection of items
+        :type cart: Cart
+        :return: the sub_total, which is the total cost of all the items in the cart.
+        """
         cart_items = CartItem.objects.filter(cart=cart)
         sub_total = 0
         for item in cart_items:
-            sub_total = item.product.price * item.quantity
+            sub_total = sub_total + (item.product.price * item.quantity)
         return sub_total
