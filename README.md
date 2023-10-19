@@ -21,8 +21,8 @@ By Default the database is SQLITE
 
 2. Generate Virtual ENV
 python -m venv venv
-source venv/bin/activate  # On Unix/Linux systems
-# Or on Windows systems
+source venv/bin/activate   On Unix/Linux systems
+Or on Windows systems
 venv\Scripts\activate
 pip install -r requirements.txt
 
