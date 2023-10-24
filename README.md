@@ -40,9 +40,3 @@ Example:
 
 To run the application locally, use the following command:
 python manage.py runserver
-
-
-
-
-
-
